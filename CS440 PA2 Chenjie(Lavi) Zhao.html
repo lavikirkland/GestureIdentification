@@ -1,0 +1,252 @@
+
+<!-- saved from url=(0071)http://www.cs.bu.edu/faculty/betke/cs440/restricted/p1/p1-template.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> CS440 PA2 Computer Vision: Chenjie(Lavi) Zhao  </title>
+<style>
+<!--
+body{
+font-family: 'Trebuchet MS', Verdana;
+}
+p{
+font-family: 'Trebuchet MS', Times;
+margin: 10px 10px 15px 20px;
+}
+h3{
+margin: 5px;
+}
+h2{
+margin: 10px;
+}
+h1{
+margin: 10px 0px 0px 20px;
+}
+div.main-body{
+align:center;
+margin: 30px;
+}
+hr{
+margin:20px 0px 20px 0px;
+}
+-->
+</style>
+</head>
+
+<body>
+<center>
+<a href="http://www.bu.edu/"><img border="0" src="./CS440 PA2_files/bu-logo.gif" width="119" height="120"></a>
+</center>
+
+<h1>PA2 Computer Vision</h1>
+<p> 
+ CS 440 Programming Assignment 2 <br>
+ Chenjie(Lavi) Zhao <br>
+    Date: 3/30/2019
+</p>
+
+<div class="main-body">
+<hr>
+<h2> Problem Definition </h2>
+<p>
+The goal of this project is to learn about Computer Vision through implementing a 
+gesture identification/classification algorithm with OpenCV library in Python.
+</p>
+<p>The assumption I made in the project is that the fixed Region of Interest(ROI) only contains 
+the hand and not the face in order to reduce computational power. The code is developed under 
+Python 3.7.3 + OpenCV 4.0.0 + Windows 10 system. The following five hand gestures are used - 
+four static and one dynamic:
+</p>
+<p>
+<table>
+<tbody><tr><td colspan="4"></td></tr>
+<tr>
+  <td><figure><img src="./CS440 PA2_files/sample0.jpg" width="200" height="200">
+  <figcaption>Rock</figcaption></figure></td>
+  <td><figure><img src="./CS440 PA2_files/sample1.jpg" width="200" height="200">
+  <figcaption>L-shape</figcaption></figure></td>
+  <td><figure><img src="./CS440 PA2_files/sample2.jpg" width="200" height="200">
+  <figcaption>Scissors</figcaption></figure></td>
+  <td><figure><img src="./CS440 PA2_files/sample3.jpg" width="200" height="200">
+  <figcaption>Paper</figcaption></figure></td>
+</tr> 
+</tbody>
+</table>
+</p>
+
+<p>
+The difficulty of this project lies in extracting the foreground that contains the gesture 
+and classifying different gestures through setting parameters in real time.
+</p>
+
+<hr>
+<h2> Method and Implementation </h2>
+<p>
+  I first preprocess the frame to subtract the background. I use the average of the first 
+  30 frames as my reference for background. Then within the Region of Interest(ROI), I detect 
+  the skin-colored blob and change its color to black. This isolates the hand shape better 
+  and reduces noise after converting the frame to grayscale, blurring it and passing them 
+  through a threshold filter. After applying the mask, I create a sub-window to display the 
+  black and white silhouette and get a contour of the processed ROI. Then I find convex hull 
+  and convexity defects, so that I can compute the angles between fingers using trig identities 
+  and the center of the hand for the dynamic gesture. Then through some primitive trials, I get 
+  the range of parameters for each gesture and after the classification process, I display necessary 
+  user information to the video stream window and the terminal.
+</p>
+
+<p>
+Techniques Used:
+<ol>
+<li>background differencing: D(x,y,t) = |I(x,y,t)-I(x,y,0)|</li>
+<li>frame-to-frame differencing: D’(x,y,t) = |I(x,y,t)-I(x,y,t-1)|</li>
+<li>skin-color detection (e.g., thresholding red and green pixel values)</li>
+<li>tracking the position and orientation of moving objects</li>
+<li>horizontal and vertical projections to find bounding boxes of ”movement blobs” or ”skin-color blobs”</li>
+<li>size, position, and orientation of ”movement blobs” or ”skin-color blobs”</li>
+</ol> 
+</p>
+
+
+
+<hr>
+<h2>Experiments</h2>
+<p>
+A total of 5 pre-determined gestures are tested against the model – four static gestures and one dynamic. For 
+each gestures, I collect 3 trials of 100 sample data and create a confusion matrix for each gesture. From these 
+300 data, I display one result with correct classification and one with wrong classification for qualitative 
+analysis. Then I compute the accuracy, precision, F1 score and recall using the confusion matrix. 
+</p>
+
+<hr>
+<h2> Results</h2>
+<p>
+<img src="./CS440 PA2_files/result.png">
+</p>
+
+<p>
+<table>
+<tbody><tr><td colspan="6"><center><h3>Results</h3></center></td></tr>
+<tr>
+<td> Input/Output </td><td> <figure>Rock</figure> </td> <td> <figure>L-shape</figure> </td> <td> <figure>Scissors</figure> </td> <td> <figure>Paper</figure> </td> <td> <figure>Undistinguishable</figure> </td>   
+</tr>
+<tr>
+  <td> Rock </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial00a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial00b.png" width="100" height="100"> <figcaption>Correct</figcaption></figure> </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial01a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial01b.png" width="100" height="100"> <figcaption>Lighting</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial02a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial02b.png" width="100" height="100"> <figcaption>Lighting</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial03a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial03b.png" width="100" height="100"> <figcaption>Lighting</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial04a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial04b.png" width="100" height="100"> <figcaption>Over-bending the wrist</figcaption></figure> </td>
+</tr> 
+<tr>
+  <td> L-shape </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial10a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial10b.png" width="100" height="100"> <figcaption>No convex defect</figcaption></figure> </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial11a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial11b.png" width="100" height="100"> <figcaption>Correct</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial12a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial12b.png" width="100" height="100"> <figcaption>Area Ratio is too small</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial13a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial13b.png" width="100" height="100"> <figcaption>N/A</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial14a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial14b.png" width="100" height="100"> <figcaption>Thumb out of ROI</figcaption></figure> </td>
+</tr> 
+<tr>
+  <td> Scissors </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial20a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial20b.png" width="100" height="100"> <figcaption></figcaption></figure> </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial21a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial21b.png" width="100" height="100"> <figcaption>Lighting</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial22a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial22b.png" width="100" height="100"> <figcaption>Correct</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial23a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial23b.png" width="100" height="100"> <figcaption>N/A</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial24a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial24b.png" width="100" height="100"> <figcaption>Hand Out of ROI</figcaption></figure> </td>
+</tr> 
+<tr>
+  <td> Paper </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial30a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial30b.png" width="100" height="100"> <figcaption>Hand Out of ROI</figcaption></figure> </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial31a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial31b.png" width="100" height="100"> <figcaption>N/A</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial32a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial32b.png" width="100" height="100"> <figcaption>Fingers too close</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial33a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial33b.png" width="100" height="100"> <figcaption>Correct</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial34a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial34b.png" width="100" height="100"> <figcaption>Thumb out of ROI</figcaption></figure> </td>
+</tr> 
+<tr>
+  <td> Undistinguishable </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial40a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial40b.png" width="100" height="100"> <figcaption>Hand Out of ROI</figcaption></figure> </td> 
+  <td> <figure> <img src="./CS440 PA2_files/trial41a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial41b.png" width="100" height="100"> <figcaption>Two convex defect</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial42a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial42b.png" width="100" height="100"> <figcaption>Two convex defect</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial43a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial43b.png" width="100" height="100"> <figcaption>N/A</figcaption></figure> </td>
+  <td> <figure> <img src="./CS440 PA2_files/trial44a.png" width="100" height="100"> <img src="./CS440 PA2_files/trial44b.png" width="100" height="100"> <figcaption>Correct</figcaption></figure> </td>
+</tr> 
+
+</tbody></table>
+</p>
+
+
+
+<hr>
+<h2> Discussion </h2>
+<p>
+From the experiment results, we can see that the method is mostly successful but can be very unstable, 
+especially with dynamic gesture.
+</p>
+<p> 
+Strengths:
+<ul>
+<li>Classify the static hand shape well</li>
+<li>Display clearly the real-time results</li>
+</ul> </p>
+
+<p> 
+Weaknesses:
+<ul>
+<li>Can’t deal with too much noise</li>
+<li>Can only identify generic gestures that are different enough</li>
+<li>Not enough defining parameters to improve accuracy</li>
+<li>Targeting a specific person; not robust or diverse enough to handle changes on its own, like the color of the cloth</li>
+</ul>
+</p>
+
+<p> 
+Future Work:
+<ul>
+<li>Get more refined threshold values through more trials with a more diverse collection of data</li>
+<li>Implement and train a neural network to classify different gestures, potentially with pre-existing 
+libraries like TensorFlow and Keras, to make the system more robust</li>
+<li>Use different Computer Vision techniques to improve accuracy especially for dynamic gestures, 
+such as motion energy template</li>
+</ul>
+</p>
+
+<hr>
+<h2> Conclusions </h2>
+
+<p>
+Computer Vision and image processing is a crucial part of Artificial Intelligence. With more time on this project to collect 
+more diverse data, the scope of its ability can be stretched some more. However, to achieve more accurate classifications, more 
+advanced Computer Vision techniques can be utilized, such as motion energy template/optical flow and the neural network structure 
+in machine learning/deep learning can be used to our benefit. Speed is also something that can be improved in this implementation.
+</p>
+
+
+<hr>
+<h2> Credits and Bibliography </h2>
+<p>
+
+Cite any papers or other references you consulted while developing
+your solution.  Citations to papers should include the authors, the
+year of publication, the title of the work, and the publication
+information (e.g., book name and publisher; conference proceedings and
+location; journal name, volume and pages; technical report and
+institution).  
+
+</p>
+<p>
+<ol>
+<li><a href="http://vipulsharma20.blogspot.com/2015/03/gesture-recognition-using-opencv-python.html">http://vipulsharma20.blogspot.com/2015/03/gesture-recognition-using-opencv-python.html</a>
+Date of Access: 4/3/2019
+</li>
+<li><a href="http://www.cs.bu.edu/fac/betke/cs440/restricted/p2/Home.html">http://www.cs.bu.edu/fac/betke/cs440/restricted/p2/Home.html</a>
+Date of Access: 4/3/2019
+</li>
+<li><a href="http://creat-tabu.blogspot.com/2013/08/opencv-python-hand-gesture-recognition.html">http://creat-tabu.blogspot.com/2013/08/opencv-python-hand-gesture-recognition.html</a>
+Date of Access: 4/3/2019
+</li>
+
+</ol>
+
+</p>
+
+<hr>
+</div>
+
+</body></html>
